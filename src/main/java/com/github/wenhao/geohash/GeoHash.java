@@ -8,7 +8,7 @@ import com.github.wenhao.geohash.domain.Coordinate;
 public class GeoHash {
 
     private static final int MAX_PRECISION = 52;
-    private static final long FIRST_BIT_FLAGGED = 0x8000000000000000l;
+    private static final long FIRST_BIT_FLAGGED = 0x8000000000000L;
     private long bits = 0;
     private byte significantBits = 0;
     private Coordinate coordinate;
@@ -87,28 +87,6 @@ public class GeoHash {
         return recombineLatLonBitsToHash(latitudeBits, longitudeBits);
     }
 
-    private GeoHash recombineLatLonBitsToHash(long[] latBits, long[] lonBits) {
-        GeoHash geoHash = new GeoHash();
-        boolean isEvenBit = false;
-        latBits[0] <<= (MAX_PRECISION - latBits[1]);
-        lonBits[0] <<= (MAX_PRECISION - lonBits[1]);
-        double[] latitudeRange = {-90.0, 90.0};
-        double[] longitudeRange = {-180.0, 180.0};
-
-        for (int i = 0; i < latBits[1] + lonBits[1]; i++) {
-            if (isEvenBit) {
-                divideRangeDecode(geoHash, latitudeRange, (latBits[0] & FIRST_BIT_FLAGGED) == FIRST_BIT_FLAGGED);
-                latBits[0] <<= 1;
-            } else {
-                divideRangeDecode(geoHash, longitudeRange, (lonBits[0] & FIRST_BIT_FLAGGED) == FIRST_BIT_FLAGGED);
-                lonBits[0] <<= 1;
-            }
-            isEvenBit = !isEvenBit;
-        }
-        geoHash.bits <<= (MAX_PRECISION - geoHash.significantBits);
-        return geoHash;
-    }
-
     private GeoHash getSouthernNeighbour() {
         long[] latitudeBits = getRightAlignedLatitudeBits();
         long[] longitudeBits = getRightAlignedLongitudeBits();
@@ -131,6 +109,28 @@ public class GeoHash {
         longitudeBits[0] -= 1;
         longitudeBits[0] = maskLastNBits(longitudeBits[0], longitudeBits[1]);
         return recombineLatLonBitsToHash(latitudeBits, longitudeBits);
+    }
+
+    private GeoHash recombineLatLonBitsToHash(long[] latBits, long[] lonBits) {
+        GeoHash geoHash = new GeoHash();
+        boolean isEvenBit = false;
+        latBits[0] <<= (MAX_PRECISION - latBits[1]);
+        lonBits[0] <<= (MAX_PRECISION - lonBits[1]);
+        double[] latitudeRange = {-90.0, 90.0};
+        double[] longitudeRange = {-180.0, 180.0};
+
+        for (int i = 0; i < latBits[1] + lonBits[1]; i++) {
+            if (isEvenBit) {
+                divideRangeDecode(geoHash, latitudeRange, (latBits[0] & FIRST_BIT_FLAGGED) == FIRST_BIT_FLAGGED);
+                latBits[0] <<= 1;
+            } else {
+                divideRangeDecode(geoHash, longitudeRange, (lonBits[0] & FIRST_BIT_FLAGGED) == FIRST_BIT_FLAGGED);
+                lonBits[0] <<= 1;
+            }
+            isEvenBit = !isEvenBit;
+        }
+        geoHash.bits <<= (MAX_PRECISION - geoHash.significantBits);
+        return geoHash;
     }
 
     private long[] getRightAlignedLatitudeBits() {
