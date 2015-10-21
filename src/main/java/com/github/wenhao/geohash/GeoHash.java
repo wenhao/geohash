@@ -130,6 +130,7 @@ public class GeoHash {
             isEvenBit = !isEvenBit;
         }
         geoHash.bits <<= (MAX_PRECISION - geoHash.significantBits);
+        geoHash.coordinate = getCenterCoordinate(latitudeRange, longitudeRange);
         return geoHash;
     }
 
@@ -156,6 +157,16 @@ public class GeoHash {
         }
         value >>>= 1;
         return value;
+    }
+
+    private Coordinate getCenterCoordinate(double[] latitudeRange, double[] longitudeRange) {
+        double minLon = Math.min(longitudeRange[0], longitudeRange[1]);
+        double maxLon = Math.max(longitudeRange[0], longitudeRange[1]);
+        double minLat = Math.min(latitudeRange[0], latitudeRange[1]);
+        double maxLat = Math.max(latitudeRange[0], latitudeRange[1]);
+        double centerLatitude = (minLat + maxLat) / 2;
+        double centerLongitude = (minLon + maxLon) / 2;
+        return new Coordinate(centerLatitude, centerLongitude);
     }
 
     private int[] getNumberOfLatLonBits() {
