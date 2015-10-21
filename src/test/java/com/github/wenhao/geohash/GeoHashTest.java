@@ -40,5 +40,6 @@ public class GeoHashTest implements Serializable {
 
         // then
         assertThat(geoHash.getAdjacent().size()).isEqualTo(8);
+        assertThat(geoHash.getAdjacent().get(0).coordinate()).isNotNull();
     }
 }
