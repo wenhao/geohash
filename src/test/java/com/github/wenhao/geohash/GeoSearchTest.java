@@ -11,7 +11,7 @@ public class GeoSearchTest {
         // given
 
         // when
-        long[] range = GeoSearch.search(30.5451620000, 104.0620180000, 3000, 5000);
+        long[] range = GeoSearch.range(30.5451620000, 104.0620180000, 3000, 5000);
 
         // then
         assertThat(range[0]).isEqualTo(4024745032941568L);

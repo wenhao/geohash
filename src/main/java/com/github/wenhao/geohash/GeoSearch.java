@@ -25,7 +25,7 @@ public class GeoSearch {
         }
     }
 
-    public static long[] search(double latitude, double longitude, double startRage, double endRange) {
+    public static long[] range(double latitude, double longitude, double startRage, double endRange) {
         GeoHash geoHash = GeoHash.fromCoordinate(latitude, longitude);
         long longValue = geoHash.toLong();
         return new long[]{getStartRange(longValue, startRage), getEndRange(longValue, endRange)};
