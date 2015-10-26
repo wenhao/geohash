@@ -7,36 +7,37 @@ import com.github.wenhao.geohash.domain.Coordinate;
 
 public class GeoHash {
 
-    private static final int MAX_PRECISION = 52;
+    public static final int MAX_PRECISION = 52;
     private static final long FIRST_BIT_FLAGGED = 0x8000000000000L;
     private long bits = 0;
     private byte significantBits = 0;
     private Coordinate coordinate;
 
-    public GeoHash() {
+    private GeoHash() {
     }
 
-    public GeoHash(double latitude, double longitude) {
-        this(latitude, longitude, MAX_PRECISION);
+    public static GeoHash fromCoordinate(double latitude, double longitude) {
+        return fromCoordinate(latitude, longitude, MAX_PRECISION);
     }
 
-    public GeoHash(double latitude, double longitude, int precision) {
-        this.coordinate = new Coordinate(latitude, longitude);
+    public static GeoHash fromCoordinate(double latitude, double longitude, int precision) {
+        GeoHash geoHash = new GeoHash();
+        geoHash.coordinate = new Coordinate(latitude, longitude);
         boolean isEvenBit = true;
         double[] latitudeRange = {-90, 90};
         double[] longitudeRange = {-180, 180};
 
-        while (significantBits < precision) {
+        while (geoHash.significantBits < precision) {
             if (isEvenBit) {
-                divideRangeEncode(longitude, longitudeRange);
+                divideRangeEncode(geoHash, longitude, longitudeRange);
             } else {
-                divideRangeEncode(latitude, latitudeRange);
+                divideRangeEncode(geoHash, latitude, latitudeRange);
             }
             isEvenBit = !isEvenBit;
         }
-        bits <<= (MAX_PRECISION - precision);
+        geoHash.bits <<= (MAX_PRECISION - precision);
+        return geoHash;
     }
-
 
     public static GeoHash fromLong(long longValue) {
         return fromLong(longValue, MAX_PRECISION);
@@ -183,13 +184,13 @@ public class GeoHash {
         return value & mask;
     }
 
-    private void divideRangeEncode(double value, double[] range) {
+    private static void divideRangeEncode(GeoHash geoHash, double value, double[] range) {
         double mid = (range[0] + range[1]) / 2;
         if (value >= mid) {
-            addOnBitToEnd();
+            geoHash.addOnBitToEnd();
             range[0] = mid;
         } else {
-            addOffBitToEnd();
+            geoHash.addOffBitToEnd();
             range[1] = mid;
         }
     }
