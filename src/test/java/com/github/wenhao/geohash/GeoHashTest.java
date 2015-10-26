@@ -42,4 +42,16 @@ public class GeoHashTest implements Serializable {
         assertThat(geoHash.getAdjacent().size()).isEqualTo(8);
         assertThat(geoHash.getAdjacent().get(0).coordinate()).isNotNull();
     }
+
+    @Test
+    public void should_be_able_to_get_distance() {
+        // given
+
+        // when
+        GeoHash geoHash = GeoHash.fromCoordinate(30.5451620000, 104.0620180000);
+        double distance = geoHash.distance(30.5665420000, 104.0754680000);
+
+        // then
+        assertThat(distance).isEqualTo(2704.544654847537D);
+    }
 }

@@ -1,5 +1,12 @@
 package com.github.wenhao.geohash;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static java.lang.Math.sqrt;
+import static java.lang.Math.toRadians;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -8,6 +15,7 @@ import com.github.wenhao.geohash.domain.Coordinate;
 public class GeoHash {
 
     public static final int MAX_PRECISION = 52;
+    private static final double EARTH_RADIUS = 6372797.560856;
     private static final long FIRST_BIT_FLAGGED = 0x8000000000000L;
     private long bits = 0;
     private byte significantBits = 0;
@@ -46,14 +54,13 @@ public class GeoHash {
     public static GeoHash fromLong(long longValue, int significantBits) {
         double[] latitudeRange = {-90.0, 90.0};
         double[] longitudeRange = {-180.0, 180.0};
-
         boolean isEvenBit = true;
         GeoHash geoHash = new GeoHash();
-
         String binaryString = Long.toBinaryString(longValue);
         while (binaryString.length() < MAX_PRECISION) {
             binaryString = "0" + binaryString;
         }
+
         for (int j = 0; j < significantBits; j++) {
             if (isEvenBit) {
                 divideRangeDecode(geoHash, longitudeRange, binaryString.charAt(j) != '0');
@@ -62,13 +69,24 @@ public class GeoHash {
             }
             isEvenBit = !isEvenBit;
         }
-
         double latitude = (latitudeRange[0] + latitudeRange[1]) / 2;
         double longitude = (longitudeRange[0] + longitudeRange[1]) / 2;
-
         geoHash.coordinate = new Coordinate(latitude, longitude);
         geoHash.bits <<= (MAX_PRECISION - geoHash.significantBits);
         return geoHash;
+    }
+
+    public double distance(double latitude, double longitude) {
+        double startLatitude = this.coordinate.getLatitude();
+        double startLongitude = this.coordinate.getLongitude();
+        double diffLongitudes = toRadians(abs(longitude - startLongitude));
+        double diffLatitudes = toRadians(abs(latitude - startLatitude));
+        double slat = toRadians(startLatitude);
+        double flat = toRadians(latitude);
+        double factor = sin(diffLatitudes / 2) * sin(diffLatitudes / 2) + cos(slat) * cos(flat) * sin(diffLongitudes / 2)
+                * sin(diffLongitudes / 2);
+        double angularDistance = 2 * atan2(sqrt(factor), sqrt(1 - factor));
+        return EARTH_RADIUS * angularDistance;
     }
 
     public List<GeoHash> getAdjacent() {
