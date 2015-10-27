@@ -95,7 +95,7 @@ public class GeoHash {
         GeoHash southern = getSouthernNeighbour();
         GeoHash western = getWesternNeighbour();
         return Arrays.asList(northern, northern.getEasternNeighbour(), eastern, southern.getEasternNeighbour(),
-                southern, southern.getWesternNeighbour(), western, northern.getWesternNeighbour());
+                southern, southern.getWesternNeighbour(), western, northern.getWesternNeighbour(), this);
     }
 
     private GeoHash getNorthernNeighbour() {
@@ -245,10 +245,6 @@ public class GeoHash {
 
     @Override
     public String toString() {
-        if (significantBits % 5 == 0) {
-            return String.format("bits: %s", Long.toBinaryString(bits));
-        } else {
-            return String.format("bits: %s", Long.toBinaryString(bits));
-        }
+        return Long.toBinaryString(bits);
     }
 }

@@ -1,8 +1,12 @@
 package com.github.wenhao.geohash;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
+
+import com.github.wenhao.geohash.domain.GeoRange;
 
 public class GeoSearchTest {
 
@@ -11,10 +15,11 @@ public class GeoSearchTest {
         // given
 
         // when
-        long[] range = GeoSearch.range(30.5451620000, 104.0620180000, 3000, 5000);
+        List<GeoRange> geoRanges = GeoSearch.range(30.5464140000, 104.0748220000, 3000);
 
         // then
-        assertThat(range[0]).isEqualTo(4024745032941568L);
-        assertThat(range[1]).isEqualTo(4024745133604864L);
+        assertThat(geoRanges.size()).isEqualTo(9);
+        assertThat(geoRanges.get(0).getMin()).isEqualTo(4025111615111168L);
+        assertThat(geoRanges.get(0).getMax()).isEqualTo(4025111682220032L);
     }
 }

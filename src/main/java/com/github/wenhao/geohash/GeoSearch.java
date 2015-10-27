@@ -1,14 +1,17 @@
 package com.github.wenhao.geohash;
 
 import static java.math.BigDecimal.ROUND_HALF_UP;
+import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import static com.github.wenhao.geohash.GeoHash.MAX_PRECISION;
+
+import com.github.wenhao.geohash.domain.GeoRange;
 
 public class GeoSearch {
     private static final BigDecimal EARTH_RADIUS = new BigDecimal(6372797.560856);
@@ -25,39 +28,34 @@ public class GeoSearch {
         }
     }
 
-    public static long[] range(double latitude, double longitude, double startRage, double endRange) {
-        GeoHash geoHash = GeoHash.fromCoordinate(latitude, longitude);
-        long longValue = geoHash.toLong();
-        return new long[]{getStartRange(longValue, startRage), getEndRange(longValue, endRange)};
+    public static List<GeoRange> range(double latitude, double longitude, double range) {
+        int desiredLength = getDesiredLength(range);
+        return getNineAroundCoordinate(latitude, longitude, desiredLength).stream()
+                .map(geoHash -> {
+                    long longValue = geoHash.toLong();
+                    long min = longValue << (MAX_PRECISION - desiredLength);
+                    long max = (longValue + 1) << (MAX_PRECISION - desiredLength);
+                    return new GeoRange(min, max);
+                })
+                .collect(toList());
     }
 
-    private static long getStartRange(long longValue, double startRage) {
-        int length = MAX_PRECISION;
-        Optional<BigDecimal> smallerKey = PRECISION_MAP.keySet()
-                .stream()
-                .sorted(Collections.reverseOrder())
-                .filter(bigDecimal -> bigDecimal.compareTo(BigDecimal.valueOf(startRage)) == -1)
-                .findFirst();
-        if (smallerKey.isPresent()) {
-            length = PRECISION_MAP.get(smallerKey.get());
-        }
-        long desiredMinPrecision = longValue >>> (MAX_PRECISION - length);
-        desiredMinPrecision <<= (MAX_PRECISION - length);
-        return desiredMinPrecision;
+    private static List<GeoHash> getNineAroundCoordinate(double latitude, double longitude, int desiredLength) {
+        long longValue = GeoHash.fromCoordinate(latitude, longitude).toLong();
+        long centralPoint = longValue >>> (MAX_PRECISION - desiredLength);
+        return GeoHash.fromLong(centralPoint).getAdjacent();
     }
 
-    private static long getEndRange(long longValue, double endRange) {
-        int length = 0;
-        Optional<BigDecimal> biggerKey = PRECISION_MAP.keySet()
+    private static int getDesiredLength(double range) {
+        int desiredLength = 0;
+        Optional<BigDecimal> rangeKey = PRECISION_MAP.keySet()
                 .stream()
                 .sorted()
-                .filter(bigDecimal -> bigDecimal.compareTo(BigDecimal.valueOf(endRange)) == 1)
+                .filter(bigDecimal -> bigDecimal.compareTo(BigDecimal.valueOf(range)) == 1)
                 .findFirst();
-        if (biggerKey.isPresent()) {
-            length = PRECISION_MAP.get(biggerKey.get());
+        if (rangeKey.isPresent()) {
+            desiredLength = PRECISION_MAP.get(rangeKey.get());
         }
-        long desiredMaxPrecision = (longValue >>> (MAX_PRECISION - length)) + 1;
-        desiredMaxPrecision <<= (MAX_PRECISION - length);
-        return desiredMaxPrecision;
+        return desiredLength;
     }
 }
