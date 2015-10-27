@@ -196,9 +196,9 @@ public class GeoHash {
         }
     }
 
-    private long maskLastNBits(long value, long n) {
-        long mask = 0xffffffffffffffffl;
-        mask >>>= (MAX_PRECISION - n);
+    private long maskLastNBits(long value, long number) {
+        long mask = 0xffffffffffffffffL;
+        mask >>>= (MAX_PRECISION - number);
         return value & mask;
     }
 
@@ -213,9 +213,9 @@ public class GeoHash {
         }
     }
 
-    private static void divideRangeDecode(GeoHash geoHash, double[] range, boolean b) {
+    private static void divideRangeDecode(GeoHash geoHash, double[] range, boolean isOnBit) {
         double mid = (range[0] + range[1]) / 2;
-        if (b) {
+        if (isOnBit) {
             geoHash.addOnBitToEnd();
             range[0] = mid;
         } else {

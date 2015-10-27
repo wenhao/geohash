@@ -40,7 +40,7 @@ public class GeoHashTest implements Serializable {
         GeoHash geoHash = GeoHash.fromCoordinate(30.5451620000, 104.0620180000);
 
         // then
-        assertThat(geoHash.getAdjacent().size()).isEqualTo(8);
+        assertThat(geoHash.getAdjacent().size()).isEqualTo(9);
         assertThat(geoHash.getAdjacent().get(0).coordinate()).isNotNull();
     }
 
@@ -64,6 +64,6 @@ public class GeoHashTest implements Serializable {
         GeoHash geoHash = GeoHash.fromCoordinate(30.5328140000,104.0761330000);
 
         // then
-        assertThat(geoHash.toString()).isEqualTo("bits: 1110010011001101000101000101100001101110110010100110");
+        assertThat(geoHash.toString()).isEqualTo("1110010011001101000101000101100001101110110010100110");
     }
 }
