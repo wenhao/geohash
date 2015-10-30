@@ -29,8 +29,16 @@
 4. 计算中心坐标相邻的8个坐标(中心坐标在两个框边界会有误差，此规避误差)。
 
 5. 加上中心坐标共9个52bit的坐标值，针对每个坐标值参照搜索范围值算出区域值[MIN, MAX]。
+    ```java
+    //搜索距离坐标(30.5464140000, 104.0748220000)3千米内9个候选范围坐标
+    List<GeoRange> geoRanges = GeoSearch.range(30.5464140000, 104.0748220000, 3000);
+    ```
     * 算法：MIN为坐标的搜索指定位起始长度后补零；MAX为坐标的搜索指定位终止长度后+1再补零。
     
 6. 使用Redis命令ZRANGEBYSCORE key MIN MAX WITHSCORES查找。
 
-7. 避免误差按照距离公式在将所有结果过滤一次(GeoHash反坐标再计算距离)。   
+7. 避免误差按照距离公式在将所有结果过滤一次(GeoHash反坐标再计算距离)。
+   ```java
+   GeoHash geoHash = GeoHash.fromLong(4024745045182841L);
+   double distance = geoHash.distance(30.5665420000, 104.0754680000);
+   ```
