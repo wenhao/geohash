@@ -1,5 +1,7 @@
 package com.github.wenhao.geohash.domain;
 
+import static java.lang.String.format;
+
 public class Coordinate {
     private double latitude;
     private double longitude;
@@ -23,5 +25,10 @@ public class Coordinate {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return format("latitude: %s, longitude: %s", latitude, longitude);
     }
 }
