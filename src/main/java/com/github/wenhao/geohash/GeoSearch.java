@@ -69,7 +69,7 @@ public class GeoSearch {
 				return o1.getKey().compareTo(o2.getKey());
 			}});
         for (Entry<BigDecimal, Integer> entry : list) {
-        	if(entry.getKey().doubleValue()>range){
+        	if(entry.getKey().compareTo(BigDecimal.valueOf(range))==1){
 	   			break;
 	   		}
 	   		desiredLength=entry.getValue();
