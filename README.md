@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/wenhao/geohash.svg?branch=master)](https://travis-ci.org/wenhao/geohash)
 
-# [GeoHash](https://github.com/wenhao/geohash)
+## [GeoHash](https://github.com/wenhao/geohash)
 
 ![GeoHash](./img/geohash.png)
 
@@ -42,13 +42,45 @@
 7. 避免误差按照距离公式在将所有结果过滤一次(GeoHash反坐标再计算距离)。
    
    
-###Example
+### 使用方式
 
-####需求
+#### 安装
+
+Maven仓库
+
+[https://oss.sonatype.org](https://oss.sonatype.org/#nexus-search;gav~com.github.wenhao~geohash~~~)
+
+##### Maven
+
+```xml
+<dependency>
+  <groupId>com.github.wenhao</groupId>
+  <artifactId>geohash</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+##### Gradle
+
+```groovy
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile(
+    "com.github.wenhao:geohash:1.0.0",
+  )
+}
+```
+
+####Example
+
+#####需求
 
    搜索2千米内所有的嘀嘀司机
     
-####实现
+#####实现
 
 1. 乘客坐标30.5464140000, 104.0748220000
 
