@@ -19,8 +19,8 @@ compileJava(compatibility)
 compileTestJava(compatibility)
 
 dependencies {
-    testCompile 'junit:junit:$junitVersion'
-    testCompile 'org.assertj:assertj-core:assertjVersion'
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.assertj:assertj-core:assertjVersion"
 
     task sourcesJar(type: Jar) {
         from sourceSets.main.allSource
