@@ -90,7 +90,9 @@
     ```java
     GeoHash geoHash = GeoHash.fromLong(4024744861876082L);
     double distance = geoHash.distance(30.5464140000, 104.0748220000);
-    if(distance < 2){
+    if(distance < 2000){
         //....
     }
     ```
+    
+此算法也可以使用其他的数据库如MySQL等.
