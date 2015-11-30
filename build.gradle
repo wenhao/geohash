@@ -2,12 +2,95 @@
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
+apply plugin: 'signing'
+
+group = 'com.github.wenhao'
+version = '1.0.0'
 
 repositories {
     mavenCentral()
 }
 
+def compatibility = {
+    sourceCompatibility=1.6
+    targetCompatibility=1.6
+}
+compileJava(compatibility)
+compileTestJava(compatibility)
+
 dependencies {
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.assertj:assertj-core:3.2.0'
+    testCompile 'junit:junit:$junitVersion'
+    testCompile 'org.assertj:assertj-core:assertjVersion'
+
+    task sourcesJar(type: Jar) {
+        from sourceSets.main.allSource
+        classifier = 'sources'
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+    signing {
+        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+        sign configurations.archives
+    }
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+                name project.name
+                packaging 'jar'
+                description 'Simplified, lightweight HTTP client library, a wrapper for apache httpclient.'
+                url 'https://github.com/wenhao/http'
+
+                scm {
+                    url 'scm:git@github.com:wenhao/http.git'
+                    connection 'scm:git@github.com:wenhao/http.git'
+                    developerConnection 'git@github.com:wenhao/http.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'wenhao'
+                        name 'Hao Wen'
+                        email 'wenhao@126.com'
+                        organization 'Hao Wen'
+                        roles {
+                            role 'Developer'
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

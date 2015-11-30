@@ -1,17 +1,15 @@
 package com.github.wenhao.geohash;
 
-import static java.math.BigDecimal.ROUND_HALF_UP;
-import static java.util.stream.Collectors.toList;
+import com.github.wenhao.geohash.domain.GeoRange;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.github.wenhao.geohash.GeoHash.MAX_PRECISION;
-
-import com.github.wenhao.geohash.domain.GeoRange;
+import static java.math.BigDecimal.ROUND_HALF_UP;
 
 public class GeoSearch {
     private static final BigDecimal EARTH_RADIUS = new BigDecimal(6372797.560856);
@@ -30,14 +28,15 @@ public class GeoSearch {
 
     public static List<GeoRange> range(double latitude, double longitude, double range) {
         int desiredLength = getDesiredLength(range);
-        return getNineAroundCoordinate(latitude, longitude, desiredLength).stream()
-                .map(geoHash -> {
-                    long longValue = geoHash.toLong();
-                    long min = longValue << (MAX_PRECISION - desiredLength);
-                    long max = (longValue + 1) << (MAX_PRECISION - desiredLength);
-                    return new GeoRange(min, max);
-                })
-                .collect(toList());
+        List<GeoHash> nineAroundCoordinates = getNineAroundCoordinate(latitude, longitude, desiredLength);
+        List<GeoRange> geoRanges = new ArrayList<GeoRange>();
+        for (GeoHash geoHash : nineAroundCoordinates) {
+            long longValue = geoHash.toLong();
+            long min = longValue << (MAX_PRECISION - desiredLength);
+            long max = (longValue + 1) << (MAX_PRECISION - desiredLength);
+            geoRanges.add(new GeoRange(min, max));
+        }
+        return geoRanges;
     }
 
     private static List<GeoHash> getNineAroundCoordinate(double latitude, double longitude, int desiredLength) {
@@ -48,13 +47,15 @@ public class GeoSearch {
 
     private static int getDesiredLength(double range) {
         int desiredLength = 0;
-        Optional<BigDecimal> rangeKey = PRECISION_MAP.keySet()
-                .stream()
-                .sorted()
-                .filter(bigDecimal -> bigDecimal.compareTo(BigDecimal.valueOf(range)) == 1)
-                .findFirst();
-        if (rangeKey.isPresent()) {
-            desiredLength = PRECISION_MAP.get(rangeKey.get());
+        BigDecimal rangeKey = null;
+        for (BigDecimal bigDecimal : PRECISION_MAP.keySet()) {
+            if (bigDecimal.compareTo(BigDecimal.valueOf(range)) == 1) {
+                rangeKey = bigDecimal;
+                break;
+            }
+        }
+        if (rangeKey != null) {
+            desiredLength = PRECISION_MAP.get(rangeKey);
         }
         return desiredLength;
     }
