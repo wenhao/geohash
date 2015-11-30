@@ -1,4 +1,6 @@
-# GeoHash
+[![Build Status](https://travis-ci.org/wenhao/geohash.png?branch=master)](https://travis-ci.org/wenhao/geohash)
+
+# [GeoHash](https://github.com/wenhao/geohash)
 
 ![GeoHash](./img/geohash.png)
 
