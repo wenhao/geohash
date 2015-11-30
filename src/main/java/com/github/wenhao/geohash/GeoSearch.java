@@ -16,7 +16,7 @@ public class GeoSearch {
     private static Map<BigDecimal, Integer> PRECISION_MAP;
 
     static {
-        PRECISION_MAP = new HashMap<>();
+        PRECISION_MAP = new HashMap<BigDecimal, Integer>();
         for (int angle = 1; angle <= MAX_PRECISION / 2; angle++) {
             BigDecimal bigDecimal = new BigDecimal(2)
                     .multiply(new BigDecimal(Math.PI))
