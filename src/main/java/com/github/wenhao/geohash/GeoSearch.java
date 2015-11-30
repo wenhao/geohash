@@ -4,6 +4,7 @@ import com.github.wenhao.geohash.domain.GeoRange;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public class GeoSearch {
         int desiredLength = 0;
         BigDecimal rangeKey = null;
         List<BigDecimal> ranges = new ArrayList<BigDecimal>(PRECISION_MAP.keySet());
-        ranges.sort(null);
+        Collections.sort(ranges);
         for (BigDecimal bigDecimal : ranges) {
             if (bigDecimal.compareTo(BigDecimal.valueOf(range)) == 1) {
                 rangeKey = bigDecimal;
