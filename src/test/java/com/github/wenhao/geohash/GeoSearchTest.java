@@ -1,12 +1,11 @@
 package com.github.wenhao.geohash;
 
+import com.github.wenhao.geohash.domain.GeoRange;
+import org.junit.Test;
+
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Test;
-
-import com.github.wenhao.geohash.domain.GeoRange;
 
 public class GeoSearchTest {
 

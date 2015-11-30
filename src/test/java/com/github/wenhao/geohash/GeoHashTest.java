@@ -1,11 +1,10 @@
 package com.github.wenhao.geohash;
 
+import org.junit.Test;
+
 import java.io.Serializable;
-import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Test;
 
 public class GeoHashTest implements Serializable {
 
@@ -61,7 +60,7 @@ public class GeoHashTest implements Serializable {
         // given
 
         // when
-        GeoHash geoHash = GeoHash.fromCoordinate(30.5328140000,104.0761330000);
+        GeoHash geoHash = GeoHash.fromCoordinate(30.5328140000, 104.0761330000);
 
         // then
         assertThat(geoHash.toString()).isEqualTo("1110010011001101000101000101100001101110110010100110");

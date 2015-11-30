@@ -48,7 +48,9 @@ public class GeoSearch {
     private static int getDesiredLength(double range) {
         int desiredLength = 0;
         BigDecimal rangeKey = null;
-        for (BigDecimal bigDecimal : PRECISION_MAP.keySet()) {
+        List<BigDecimal> ranges = new ArrayList<BigDecimal>(PRECISION_MAP.keySet());
+        ranges.sort(null);
+        for (BigDecimal bigDecimal : ranges) {
             if (bigDecimal.compareTo(BigDecimal.valueOf(range)) == 1) {
                 rangeKey = bigDecimal;
                 break;
