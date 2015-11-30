@@ -20,7 +20,7 @@ compileTestJava(compatibility)
 
 dependencies {
     testCompile "junit:junit:$junitVersion"
-    testCompile "org.assertj:assertj-core:assertjVersion"
+    testCompile "org.assertj:assertj-core:$assertjVersion"
 
     task sourcesJar(type: Jar) {
         from sourceSets.main.allSource
@@ -62,13 +62,13 @@ uploadArchives {
             pom.project {
                 name project.name
                 packaging 'jar'
-                description 'Simplified, lightweight HTTP client library, a wrapper for apache httpclient.'
-                url 'https://github.com/wenhao/http'
+                description '52位GeoHash搜索算法.'
+                url 'https://github.com/wenhao/geohash'
 
                 scm {
-                    url 'scm:git@github.com:wenhao/http.git'
-                    connection 'scm:git@github.com:wenhao/http.git'
-                    developerConnection 'git@github.com:wenhao/http.git'
+                    url 'scm:git@github.com:wenhao/geohash.git'
+                    connection 'scm:git@github.com:wenhao/geohash.git'
+                    developerConnection 'git@github.com:wenhao/geohash.git'
                 }
 
                 licenses {
