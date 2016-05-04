@@ -8,7 +8,9 @@ group = 'com.github.wenhao'
 version = '1.0.0'
 
 repositories {
-    mavenCentral()
+    maven {
+        url 'http://121.199.66.97/artifactory/mave2/'
+    }
 }
 
 def compatibility = {
