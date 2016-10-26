@@ -4,7 +4,7 @@
    
 ### 功能
 
-* 52位Geohash, 精度0.6m
+* 52位Geohash([32位GeoHash算法]), 精度0.6m
 * 经纬度转52位integer值
 * 根据距离搜索附近目标
 
@@ -44,5 +44,6 @@ Copyright 2016 Wen Hao
 
 Licensed under [Apache License]
 
-[52为GeoHash算法]: ./docs/algorithm.md
+[52位GeoHash算法]: ./docs/algorithm.md
+[32位GeoHash算法]: https://en.wikipedia.org/wiki/Geohash
 [结合Redis的例子]: ./docs/example.md
