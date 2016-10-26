@@ -1,16 +1,23 @@
-
+plugins {
+    id 'com.gradle.build-scan' version '1.2'
+    id "com.jfrog.bintray" version "1.7"
+    id "org.owasp.dependencycheck" version "1.4.3"
+}
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
+}
 apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'signing'
+apply plugin: 'com.jfrog.bintray'
 
 group = 'com.github.wenhao'
 version = '1.0.0'
 
 repositories {
-    maven {
-        url 'http://121.199.66.97/artifactory/mave2/'
-    }
+    jcenter()
 }
 
 def compatibility = {
@@ -48,6 +55,78 @@ dependencies {
     }
 }
 
+// publish to jcenter
+bintray {
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
+    configurations = ['archives']
+    dryRun = false
+    publish = true
+    override = false
+    pkg {
+        repo = 'maven'
+        name = 'geohash'
+        desc = '52位GeoHash搜索算法'
+        licenses = ['Apache-2.0']
+        websiteUrl = 'https://github.com/wenhao/geohash'
+        issueTrackerUrl = 'https://github.com/wenhao/geohash/issues'
+        vcsUrl = 'https://github.com/wenhao/geohash'
+        labels = ['geohash']
+        publicDownloadNumbers = true
+        githubRepo = 'wenhao/geohash'
+        githubReleaseNotesFile = 'README.md'
+        version {
+            name = '1.0.0'
+            desc = '52位GeoHash搜索算法'
+            released = new Date()
+            vcsTag = '1.0.0'
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        pom.project {
+            name 'geohash'
+            description '52位GeoHash搜索算法'
+            url 'https://github.com/wenhao/geohash'
+            inceptionYear '2016'
+
+            packaging 'jar'
+            groupId 'com.github.wenhao'
+            artifactId 'geohash'
+            version '1.0.0'
+
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+
+            scm {
+                url 'https://github.com/wenhao/geohash'
+                connection 'https://github.com/wenhao/geohash.git'
+                developerConnection 'git@github.com:wenhao/geohash.git'
+            }
+
+            developers {
+                developer {
+                    id 'wenhao'
+                    name 'Hao Wen'
+                    email 'wenhao@126.com'
+                    organization 'Hao Wen'
+                    roles {
+                        role 'Developer'
+                    }
+                }
+            }
+        }
+    }
+}
+
+// publish to maven center
 uploadArchives {
     repositories {
         mavenDeployer {
