@@ -1,5 +1,7 @@
 ![GeoHash](./img/geohash.png)
 
+GeoHash算法采用的是RTree算法。
+
 1. 坐标转换成52bit二进制编码值。
 
     * 52bit精度在0.6m足够满足搜索范围需求。
