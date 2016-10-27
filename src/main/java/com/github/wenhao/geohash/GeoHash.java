@@ -1,22 +1,15 @@
 package com.github.wenhao.geohash;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.toRadians;
+import com.github.wenhao.geohash.domain.Coordinate;
+import com.github.wenhao.geohash.math.GeoDistance;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-import com.github.wenhao.geohash.domain.Coordinate;
-
 public class GeoHash implements Serializable {
 
     public static final int MAX_PRECISION = 52;
-    private static final double EARTH_RADIUS = 6372797.560856;
     private static final long FIRST_BIT_FLAGGED = 0x8000000000000L;
     private long bits = 0;
     private byte significantBits = 0;
@@ -78,15 +71,7 @@ public class GeoHash implements Serializable {
     }
 
     public double distance(double latitude, double longitude) {
-        double startLatitude = this.coordinate.getLatitude();
-        double startLongitude = this.coordinate.getLongitude();
-        double diffLongitudes = toRadians(abs(longitude - startLongitude));
-        double diffLatitudes = toRadians(abs(latitude - startLatitude));
-        double slat = toRadians(startLatitude);
-        double flat = toRadians(latitude);
-        double factor = sin(diffLatitudes / 2) * sin(diffLatitudes / 2) + cos(slat) * cos(flat) * sin(diffLongitudes / 2) * sin(diffLongitudes / 2);
-        double angularDistance = 2 * atan2(sqrt(factor), sqrt(1 - factor));
-        return EARTH_RADIUS * angularDistance;
+        return GeoDistance.distance(this.coordinate.getLatitude(), this.coordinate.getLongitude(), latitude, longitude);
     }
 
     public List<GeoHash> getAdjacent() {
