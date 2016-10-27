@@ -7,12 +7,13 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.toRadians;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 import com.github.wenhao.geohash.domain.Coordinate;
 
-public class GeoHash {
+public class GeoHash implements Serializable {
 
     public static final int MAX_PRECISION = 52;
     private static final double EARTH_RADIUS = 6372797.560856;
@@ -83,8 +84,7 @@ public class GeoHash {
         double diffLatitudes = toRadians(abs(latitude - startLatitude));
         double slat = toRadians(startLatitude);
         double flat = toRadians(latitude);
-        double factor = sin(diffLatitudes / 2) * sin(diffLatitudes / 2) + cos(slat) * cos(flat) * sin(diffLongitudes / 2)
-                * sin(diffLongitudes / 2);
+        double factor = sin(diffLatitudes / 2) * sin(diffLatitudes / 2) + cos(slat) * cos(flat) * sin(diffLongitudes / 2) * sin(diffLongitudes / 2);
         double angularDistance = 2 * atan2(sqrt(factor), sqrt(1 - factor));
         return EARTH_RADIUS * angularDistance;
     }
@@ -95,7 +95,7 @@ public class GeoHash {
         GeoHash southern = getSouthernNeighbour();
         GeoHash western = getWesternNeighbour();
         return Arrays.asList(northern, northern.getEasternNeighbour(), eastern, southern.getEasternNeighbour(),
-                southern, southern.getWesternNeighbour(), western, northern.getWesternNeighbour(), this);
+            southern, southern.getWesternNeighbour(), western, northern.getWesternNeighbour(), this);
     }
 
     private GeoHash getNorthernNeighbour() {
