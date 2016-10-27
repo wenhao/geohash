@@ -57,3 +57,4 @@ Licensed under [Apache License]
 [52位GeoHash算法]: ./docs/algorithm.md
 [32位GeoHash算法]: https://en.wikipedia.org/wiki/Geohash
 [结合Redis的例子]: ./docs/example.md
+[Apache License]: ./LICENSE
