@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.github.wenhao'
-version = '1.0.1'
+version = '1.0.2'
 
 repositories {
     jcenter()
@@ -76,7 +76,7 @@ publishing {
             artifact javadocJar
             groupId 'com.github.wenhao'
             artifactId 'geohash'
-            version '1.0.1'
+            version '1.0.2'
             pom.withXml {
                 def root = asNode()
                 root.appendNode('description', '52 bit GeoHash search algorithm.')
@@ -111,10 +111,10 @@ bintray {
         githubRepo = 'wenhao/geohash'
         githubReleaseNotesFile = 'README.md'
         version {
-            name = '1.0.1'
+            name = '1.0.2'
             desc = '52 bit GeoHash search algorithm.'
             released = new Date()
-            vcsTag = '1.0.1'
+            vcsTag = '1.0.2'
             gpg {
                 sign = true
                 passphrase = 'passphrase'
