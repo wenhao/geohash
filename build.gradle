@@ -1,20 +1,12 @@
 plugins {
-    id 'com.gradle.build-scan' version '1.2'
-    id "com.jfrog.bintray" version "1.7"
-    id "org.owasp.dependencycheck" version "1.4.3"
+    id 'java-library'
+    id 'idea'
+    id "com.jfrog.bintray" version "1.8.4"
+    id 'maven-publish'
 }
-buildScan {
-    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-    licenseAgree = 'yes'
-}
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'maven'
-apply plugin: 'signing'
-apply plugin: 'com.jfrog.bintray'
 
 group = 'com.github.wenhao'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
     jcenter()
@@ -30,28 +22,70 @@ compileTestJava(compatibility)
 dependencies {
     testCompile "junit:junit:$junitVersion"
     testCompile "org.assertj:assertj-core:$assertjVersion"
+}
 
-    task sourcesJar(type: Jar) {
-        from sourceSets.main.allSource
-        classifier = 'sources'
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name 'The Apache Software License, Version 2.0'
+            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+            distribution 'repo'
+        }
     }
 
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
+    scm {
+        url 'https://github.com/wenhao/geohash'
+        connection 'https://github.com/wenhao/geohash.git'
+        developerConnection 'git@github.com:wenhao/geohash.git'
     }
 
-    artifacts {
-        archives jar
-        archives sourcesJar
-        archives javadocJar
+    developers {
+        developer {
+            id 'wenhao'
+            name 'Hao Wen'
+            email 'wenhao@126.com'
+            organization 'Hao Wen'
+            roles {
+                role 'Developer'
+            }
+        }
     }
+}
 
-    ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
-
-    signing {
-        required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
-        sign configurations.archives
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId 'com.github.wenhao'
+            artifactId 'geohash'
+            version '1.0.1'
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', '52 bit GeoHash search algorithm.')
+                root.appendNode('name', 'mushrooms')
+                root.appendNode('url', 'https://github.com/wenhao/geohash')
+                root.appendNode('inceptionYear', '2016')
+                root.children().last() + pomConfig
+            }
+        }
     }
 }
 
@@ -60,117 +94,36 @@ bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
     configurations = ['archives']
+    publications = ['maven']
     dryRun = false
     publish = true
-    override = false
+    override = true
     pkg {
         repo = 'maven'
         name = 'geohash'
-        desc = '52位GeoHash搜索算法'
+        desc = '52 bit GeoHash search algorithm.'
         licenses = ['Apache-2.0']
         websiteUrl = 'https://github.com/wenhao/geohash'
         issueTrackerUrl = 'https://github.com/wenhao/geohash/issues'
         vcsUrl = 'https://github.com/wenhao/geohash'
-        labels = ['geohash']
+        labels = ['geo', 'geohash']
         publicDownloadNumbers = true
         githubRepo = 'wenhao/geohash'
         githubReleaseNotesFile = 'README.md'
         version {
-            name = '1.0.0'
-            desc = '52位GeoHash搜索算法'
+            name = '1.0.1'
+            desc = '52 bit GeoHash search algorithm.'
             released = new Date()
-            vcsTag = '1.0.0'
-        }
-    }
-}
-
-install {
-    repositories.mavenInstaller {
-        pom.project {
-            name 'geohash'
-            description '52位GeoHash搜索算法'
-            url 'https://github.com/wenhao/geohash'
-            inceptionYear '2016'
-
-            packaging 'jar'
-            groupId 'com.github.wenhao'
-            artifactId 'geohash'
-            version '1.0.0'
-
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
+            vcsTag = '1.0.1'
+            gpg {
+                sign = true
+                passphrase = 'passphrase'
             }
-
-            scm {
-                url 'https://github.com/wenhao/geohash'
-                connection 'https://github.com/wenhao/geohash.git'
-                developerConnection 'git@github.com:wenhao/geohash.git'
-            }
-
-            developers {
-                developer {
-                    id 'wenhao'
-                    name 'Hao Wen'
-                    email 'wenhao@126.com'
-                    organization 'Hao Wen'
-                    roles {
-                        role 'Developer'
-                    }
-                }
-            }
-        }
-    }
-}
-
-// publish to maven center
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-
-            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
-
-            pom.project {
-                name project.name
-                packaging 'jar'
-                description '52位GeoHash搜索算法.'
-                url 'https://github.com/wenhao/geohash'
-
-                scm {
-                    url 'scm:git@github.com:wenhao/geohash.git'
-                    connection 'scm:git@github.com:wenhao/geohash.git'
-                    developerConnection 'git@github.com:wenhao/geohash.git'
-                }
-
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        distribution 'repo'
-                    }
-                }
-
-                developers {
-                    developer {
-                        id 'wenhao'
-                        name 'Hao Wen'
-                        email 'wenhao@126.com'
-                        organization 'Hao Wen'
-                        roles {
-                            role 'Developer'
-                        }
-                    }
-                }
+            mavenCentralSync {
+                sync = false
+                user = project.hasProperty('sonatypeUsername')
+                password = project.hasProperty('sonatypePassword')
+                close = '1'
             }
         }
     }

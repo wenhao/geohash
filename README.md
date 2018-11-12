@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.github.wenhao:geohash:1.0.0'
+  compile 'com.github.wenhao:geohash:1.0.1'
 }
 ```
 
@@ -50,7 +50,7 @@ dependencies {
 
 ### Copyright and license
 
-Copyright 2016 Wen Hao
+Copyright 2016~2018 Wen Hao
 
 Licensed under [Apache License]
 
